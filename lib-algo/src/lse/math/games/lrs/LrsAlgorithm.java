@@ -120,7 +120,12 @@ public class LrsAlgorithm implements Lrs
 		throw new RuntimeException("Not Impl");		
 	}
 	
-	public VPolygon run(HPolygon in)
+	public VPolygon run(HPolygon in){
+		List<vertex> vtlist = new ArrayList<vertex>();
+		return run(in, vtlist);		
+	}
+	
+	public VPolygon run(HPolygon in, List<vertex> vtlist)
 	{
 		// TODO: put all this reset member vars in an initRun() method
 		sumdet = BigInteger.ZERO;
@@ -182,18 +187,25 @@ public class LrsAlgorithm implements Lrs
 		do
 		{			
 			//if (!lrs.checkbound(P)) {
+			vertex vt = new vertex(P);
 			if (getvertex(P, output, solution)) { // check for lexmin vertex
-				printoutput(output, solution);
+				printoutput(output, solution, P);
+				vt.setVertex(output);
+			    vt.setVertexLabel(this, P);
+			    vtlist.add(vt);
 			}
 			// since I am not iterating by column, I think it messes up the order
 			// get cobasis from Dictionary sorted by lowest col for parity
 			int[] cobasis = P.cobasis();
 			for (int i = 0; i < cobasis.length; ++i) {				
 				if (getsolution (P, output, solution, cobasis[i])) {
-					printoutput(output, solution);
+					printoutput(output, solution, P);
+				//	vt.setVertex(output);
+				//    vt.setVertexLabel(this, P);
+				//    vtlist.add(vt);
 				}
 			}
-			//}
+			//} 
 		}
 		while (getnextbasis (P/*, prune*/));		
 		
@@ -355,7 +367,7 @@ public class LrsAlgorithm implements Lrs
 		  log.info(String.format("*Dictionary Cache: max size= %d misses= %d/%d   Tree Depth= %d", 0/*dict_count*/, cacheMisses, cacheTries, deepest));
 	}
 	
-	private void printoutput (BigInteger[] output, VPolygon solution)
+	private void printoutput (BigInteger[] output, VPolygon solution, Dictionary P)
 	{
 		StringBuilder sb = new StringBuilder();
 		Rational[] vertex = new Rational[output.length];
@@ -377,7 +389,8 @@ public class LrsAlgorithm implements Lrs
 			}		
 		}
 		log.info(sb.toString());
-		solution.vertices.add(vertex);
+		if (P.lexflag()) // Wan Questiona: should i add this?? 
+		    solution.vertices.add(vertex); 
 	}
 	
 	/*
@@ -998,6 +1011,9 @@ public class LrsAlgorithm implements Lrs
 
 		return true;
 	}
+	
+
+	
 
 	/* col is output column being printed */
 	private void printcobasis (Dictionary P, VPolygon solution, int col)	
@@ -1020,12 +1036,14 @@ public class LrsAlgorithm implements Lrs
 		for (int i = 0; i < cobasis.length; ++i)
 		{
 			sb.append(String.format(" %d", cobasis[i]));
-
+			
 			// perhaps I need to have a special name for the result column
-			if (!(col == 0) && (rflag == cobasis[i])) {
+			if (!(col == 0) && (rflag == cobasis[i])) 
 				sb.append("*"); // missing cobasis element for ray
-			}
-		}		
+			
+		
+		}	
+			
 		
 		/* get and print incidence information */
 		long nincidence;       /* count number of tight inequalities */
@@ -1062,6 +1080,10 @@ public class LrsAlgorithm implements Lrs
 		log.info(sb.toString());
 		if (P.lexflag()) {
 			solution.cobasis.add(incidenceList.toArray(new Integer[0]));
+			if (rflag >= 0) 
+				solution.ray.add(1);
+			else
+				solution.ray.add(0);
 		}
 	}
 	
@@ -1359,4 +1381,5 @@ public class LrsAlgorithm implements Lrs
 			
 		public CacheEntry prev;
 	}
+	
 }

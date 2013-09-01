@@ -8,6 +8,7 @@ import lse.math.games.Rational;
 public class VPolygon {
 	public List<Rational[]> vertices = new ArrayList<Rational[]>(); // may also contain rays
 	public List<Integer[]> cobasis = new ArrayList<Integer[]>();
+	public List<Integer> ray = new ArrayList<Integer>(); //1 for rays; 0 for vertices. 
 	//boolean hull = true; //when is this false?  I should try to set this as an output param as well
 	//boolean voronoi = false; //(if true, then poly is false)
 	
