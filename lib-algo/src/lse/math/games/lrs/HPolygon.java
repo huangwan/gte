@@ -48,4 +48,12 @@ public class HPolygon {
 		}
 		return ishomo;		
 	}
+	
+	public int get_d(){
+		return this.d;
+	}
+	
+	public int get_m(){
+		return this.m;
+	}
 }
