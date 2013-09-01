@@ -23,6 +23,8 @@ public class SequenceForm
     Map<Player,Rational[][]> payoffs = new HashMap<Player,Rational[][]>();
     private Map<Player,Integer[][]> constraintsMap = new HashMap<Player,Integer[][]>();
     
+    Map<Player,Rational[][]> originalPayoffs = new HashMap<Player, Rational[][]>();
+    
     
     private Map<Iset,Move> seqin = new HashMap<Iset,Move>();
     private Map<Node,Map<Player,Move>> defseq = new HashMap<Node,Map<Player,Move>>();
@@ -36,7 +38,7 @@ public class SequenceForm
     
     private Map<Move,Rational> randomPriors = new HashMap<Move,Rational>();
     
-          
+    
     
     //static int oldnseqs1 = 0;
     //static int[] oldconstrows = new int[] {0, 0, 0};
@@ -80,6 +82,8 @@ public class SequenceForm
                 Rational pay = u.outcome.pay(pl).add(payAdjust.get(pl));
                 Rational prob = realprob(udefseq.get(Player.CHANCE)); // get probability of reaching this node even if both players trying to get here                
                 payoffs.get(pl)[row][col] = payoffs.get(pl)[row][col].add(prob.multiply(pay));
+                originalPayoffs.get(pl)[row][col] = originalPayoffs.get(pl)[row][col].add(prob.multiply(u.outcome.pay(pl)));
+               // originalPayoffs.get(pl)[row][col] = prob.multiply(u.outcome.pay(pl));
             }
     	}
         /* sf constraint matrices, sparse fill  */
@@ -250,9 +254,12 @@ public class SequenceForm
         /* payoff matrices, two players only here, init to pay 0        */
         for (Player pl = firstPlayer; pl != null; pl = pl.next) {
             payoffs.put(pl, new Rational[nseqs(firstPlayer)][nseqs(firstPlayer.next)]);
+            originalPayoffs.put(pl, new Rational[nseqs(firstPlayer)][nseqs(firstPlayer.next)]);
             for (int i = 0; i < nseqs(firstPlayer); i++)
-                for (int j = 0; j < nseqs(firstPlayer.next); j++)
+                for (int j = 0; j < nseqs(firstPlayer.next); j++){
                 	payoffs.get(pl)[i][j] = Rational.ZERO;
+                	originalPayoffs.get(pl)[i][j] = Rational.ZERO;
+                }
        	
     	    constraintsMap.put(pl, new Integer[nisets(pl) + 1][nseqs(pl)]); /* extra row for seq 0  */
     	}
@@ -382,7 +389,7 @@ public class SequenceForm
 				
 		return output.toString();
     }
-    
+ 
     public LCP getLemkeLCP()
     throws InvalidPlayerException
     {
@@ -463,6 +470,8 @@ public class SequenceForm
         return addCoveringVector(lcp);        
     }
     
+
+  
     private LCP addCoveringVector(LCP lcp)
     {
     	// this is where priors come into play... 
@@ -496,7 +505,9 @@ public class SequenceForm
         }        
         return lcp;
     }
-   
+    
+ 
+
     public Map<Player,Map<Move,Rational>> parseLemkeSolution(Rational[] solz)
     {
     	Map<Player,Map<Move,Rational>> probs = new HashMap<Player,Map<Move,Rational>>();
@@ -563,6 +574,17 @@ public class SequenceForm
     	return idx == 1 ? firstPlayer : firstPlayer.next;
     }
     
+
+	public static class InvalidMatrixDimension extends Exception
+	{
+		private static final long serialVersionUID = 1L;
+		
+		public InvalidMatrixDimension(String msg)
+		{
+			super(msg);
+		}
+	}
+	
     public static class InvalidPlayerException extends Exception
     {
 		private static final long serialVersionUID = 1L;
@@ -614,4 +636,32 @@ public class SequenceForm
 			}
 		}
 	}
+		   
+    public Integer[][] getConstraints1()
+    {
+    	return constraintsMap.get(firstPlayer);
+    }
+    
+    public Integer[][] getConstraints2()
+    {
+    	return constraintsMap.get(firstPlayer.next);
+    }
+    
+    public Rational[][] getPay1()
+    {
+    	return originalPayoffs.get(firstPlayer);
+    }
+    
+    public Rational[][] getPay2()
+    {
+    	return originalPayoffs.get(firstPlayer.next);
+    }
+    
+    public Player getFirstPlayer()
+    {
+    	return firstPlayer;
+    }
+    
 }
+	
+
