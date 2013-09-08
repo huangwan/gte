@@ -41,6 +41,16 @@
     <Directory></Directory>
     <MaxSeconds>600</MaxSeconds>
   </Servlet>
+  
+  
+  <Servlet Name="Lrs Find All Seq Eq">
+    <Active>1</Active>
+    <Tooltip>Lrs Find All Sequence Form Equilibrium</Tooltip>
+    <Url>/gte/matrix/</Url>
+    <Type>nf</Type>
+    <Directory></Directory>
+    <MaxSeconds>600</MaxSeconds>
+  </Servlet>
 
   
     <Servlet Name="Lemke SF Eq">
