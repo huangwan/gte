@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import lse.math.games.Rational;
 import lse.math.games.io.ColumnTextWriter;
 import lse.math.games.lcp.LCP;
+import lse.math.games.matrix.Equilibrium;
 
 public class SequenceForm 
 {	
@@ -47,7 +48,6 @@ public class SequenceForm
 	{     	
     	this(tree, null);
 	}
-    
     
     public SequenceForm(ExtensiveForm tree, Long seed)
     	throws ImperfectRecallException
@@ -635,6 +635,12 @@ public class SequenceForm
 				}
 			}
 		}
+	}
+	
+	public Equilibrium convertToSeqEquilibrium(Equilibrium strat){
+		Equilibrium seq = new Equilibrium();
+		
+		return seq;
 	}
 		   
     public Integer[][] getConstraints1()
