@@ -42,17 +42,6 @@
     <MaxSeconds>600</MaxSeconds>
   </Servlet>
   
-  
-  <Servlet Name="Lrs Find All Seq Eq">
-    <Active>1</Active>
-    <Tooltip>Lrs Find All Sequence Form Equilibrium</Tooltip>
-    <Url>/gte/matrix/</Url>
-    <Type>nf</Type>
-    <Directory></Directory>
-    <MaxSeconds>600</MaxSeconds>
-  </Servlet>
-
-  
     <Servlet Name="Lemke SF Eq">
     <Active>1</Active>
     <Tooltip>Lemke Find One Equilibrium (Sequence Form)</Tooltip>
@@ -63,4 +52,13 @@
   </Servlet>
 
   
-</Servlets>
+  <Servlet Name="Lrs All Seq">
+    <Active>1</Active>
+    <Tooltip>Lrs Find All Sequence Form Equilibrium</Tooltip>
+    <Url>/gte/tree/</Url>
+    <Type>xf</Type>
+    <Directory></Directory>
+    <MaxSeconds>600</MaxSeconds>
+  </Servlet>
+
+  </Servlets>
